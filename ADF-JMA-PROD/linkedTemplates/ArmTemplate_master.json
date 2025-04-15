@@ -11,6 +11,22 @@
 			"type": "secureString",
 			"metadata": "Secure string for 'connectionString' of 'AzureBlobStorageLS'"
 		},
+		"LS_AzureBlobStorage_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'LS_AzureBlobStorage'"
+		},
+		"LS_Snowflake_password": {
+			"type": "secureString",
+			"metadata": "Secure string for 'password' of 'LS_Snowflake'"
+		},
+		"AzureKeyVaultForSnowflake_properties_typeProperties_baseUrl": {
+			"type": "string",
+			"defaultValue": "https://AzureKeyVaultManager.vault.azure.net/"
+		},
+		"LS_Snowflake_properties_typeProperties_database": {
+			"type": "string",
+			"defaultValue": "INVOICE"
+		},
 		"containerUri": {
 			"type": "string",
 			"metadata": "URI to storage account containing linked ARM templates"
@@ -40,6 +56,18 @@
 					},
 					"AzureBlobStorageLS_connectionString": {
 						"value": "[parameters('AzureBlobStorageLS_connectionString')]"
+					},
+					"LS_AzureBlobStorage_connectionString": {
+						"value": "[parameters('LS_AzureBlobStorage_connectionString')]"
+					},
+					"LS_Snowflake_password": {
+						"value": "[parameters('LS_Snowflake_password')]"
+					},
+					"AzureKeyVaultForSnowflake_properties_typeProperties_baseUrl": {
+						"value": "[parameters('AzureKeyVaultForSnowflake_properties_typeProperties_baseUrl')]"
+					},
+					"LS_Snowflake_properties_typeProperties_database": {
+						"value": "[parameters('LS_Snowflake_properties_typeProperties_database')]"
 					}
 				}
 			},

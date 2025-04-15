@@ -7,6 +7,18 @@
 		},
 		"AzureBlobStorageLS_connectionString": {
 			"value": ""
+		},
+		"LS_AzureBlobStorage_connectionString": {
+			"value": ""
+		},
+		"LS_Snowflake_password": {
+			"value": ""
+		},
+		"AzureKeyVaultForSnowflake_properties_typeProperties_baseUrl": {
+			"value": "https://AzureKeyVaultManager.vault.azure.net/"
+		},
+		"LS_Snowflake_properties_typeProperties_database": {
+			"value": "INVOICE"
 		}
 	}
 }
