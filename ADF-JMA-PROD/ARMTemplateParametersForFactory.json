@@ -8,14 +8,17 @@
 		"AzureBlobStorageLS_connectionString": {
 			"value": ""
 		},
-		"LS_AzureBlobStorage_connectionString": {
+		"LS_Snowflake_password": {
 			"value": ""
 		},
-		"LS_Snowflake_password": {
+		"SnowflakeV1_connectionString": {
 			"value": ""
 		},
 		"AzureKeyVaultForSnowflake_properties_typeProperties_baseUrl": {
 			"value": "https://AzureKeyVaultManager.vault.azure.net/"
+		},
+		"LS_AzureBlobStorage_sasUri": {
+			"value": ""
 		},
 		"LS_Snowflake_properties_typeProperties_database": {
 			"value": "INVOICE"
