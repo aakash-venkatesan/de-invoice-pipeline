@@ -43,7 +43,7 @@
 			"properties": {
 				"activities": [
 					{
-						"name": "Copy data ",
+						"name": "Copy data from blob to snowflake",
 						"type": "Copy",
 						"dependsOn": [],
 						"policy": {
