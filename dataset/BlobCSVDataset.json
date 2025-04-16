@@ -1,8 +1,8 @@
 {
-	"name": "DS_BlobCSV",
+	"name": "BlobCSVDataset",
 	"properties": {
 		"linkedServiceName": {
-			"referenceName": "LS_AzureBlobStorage",
+			"referenceName": "AzureBlobStorageLS",
 			"type": "LinkedServiceReference"
 		},
 		"annotations": [],
@@ -10,7 +10,7 @@
 		"typeProperties": {
 			"location": {
 				"type": "AzureBlobStorageLocation",
-				"fileName": "Invoice_data.csv",
+				"fileName": "invoices_dataset.csv",
 				"container": "invoice-container"
 			},
 			"columnDelimiter": ",",

@@ -1,0 +1,21 @@
+{
+	"name": "ExcelDataset",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "LS_AzureBlobStorage",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "Excel",
+		"typeProperties": {
+			"sheetName": "15-04-2025 Anonymized Invoices.xlsx",
+			"location": {
+				"type": "AzureBlobStorageLocation",
+				"container": "invoice-container"
+			},
+			"firstRowAsHeader": true
+		},
+		"schema": []
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}
