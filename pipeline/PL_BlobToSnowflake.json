@@ -28,6 +28,7 @@
 					},
 					"sink": {
 						"type": "SnowflakeV2Sink",
+						"preCopyScript": "TRUNCATE TABLE INVOICE.RAW.RAW_INVOICE_DATA;",
 						"importSettings": {
 							"type": "SnowflakeImportCopyCommand"
 						}
