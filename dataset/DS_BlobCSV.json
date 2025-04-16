@@ -10,8 +10,8 @@
 		"typeProperties": {
 			"location": {
 				"type": "AzureBlobStorageLocation",
-				"fileName": "Invoice_data.csv",
-				"container": "invoice-container"
+				"fileName": "RAW_INVOICE_DATA.csv",
+				"container": "invoicecontainer"
 			},
 			"columnDelimiter": ",",
 			"escapeChar": "\\",

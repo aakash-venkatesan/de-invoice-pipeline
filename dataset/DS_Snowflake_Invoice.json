@@ -9,8 +9,8 @@
 		"type": "SnowflakeV2Table",
 		"schema": [],
 		"typeProperties": {
-			"schema": "STAGING",
-			"table": "invoice_data"
+			"schema": "TEST",
+			"table": "raw_invoice_data"
 		}
 	},
 	"type": "Microsoft.DataFactory/factories/datasets"
