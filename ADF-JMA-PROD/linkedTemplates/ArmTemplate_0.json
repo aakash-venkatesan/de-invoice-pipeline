@@ -918,7 +918,7 @@
 				"schema": [],
 				"typeProperties": {
 					"schema": "RAW",
-					"table": "raw_invoice_data"
+					"table": "RAW_INVOICE_DATA"
 				}
 			},
 			"dependsOn": [
@@ -982,6 +982,7 @@
 							},
 							"sink": {
 								"type": "SnowflakeV2Sink",
+								"preCopyScript": "TRUNCATE TABLE INVOICE.RAW.RAW_INVOICE_DATA;",
 								"importSettings": {
 									"type": "SnowflakeImportCopyCommand"
 								}
