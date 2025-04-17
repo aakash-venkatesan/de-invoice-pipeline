@@ -8,6 +8,9 @@
 		"AzureBlobStorageLS_connectionString": {
 			"value": ""
 		},
+		"AzureBlobStorageSales_connectionString": {
+			"value": ""
+		},
 		"LS_Snowflake_password": {
 			"value": ""
 		},
@@ -22,6 +25,9 @@
 		},
 		"LS_Snowflake_properties_typeProperties_database": {
 			"value": "INVOICE"
+		},
+		"linkedServiceSales_sasUri": {
+			"value": ""
 		},
 		"containerUri": {
 			"value": ""

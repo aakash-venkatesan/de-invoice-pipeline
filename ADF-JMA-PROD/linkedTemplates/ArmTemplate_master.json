@@ -11,6 +11,10 @@
 			"type": "secureString",
 			"metadata": "Secure string for 'connectionString' of 'AzureBlobStorageLS'"
 		},
+		"AzureBlobStorageSales_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'AzureBlobStorageSales'"
+		},
 		"LS_Snowflake_password": {
 			"type": "secureString",
 			"metadata": "Secure string for 'password' of 'LS_Snowflake'"
@@ -30,6 +34,10 @@
 		"LS_Snowflake_properties_typeProperties_database": {
 			"type": "string",
 			"defaultValue": "INVOICE"
+		},
+		"linkedServiceSales_sasUri": {
+			"type": "secureString",
+			"metadata": "Secure string for 'sasUri' of 'linkedServiceSales'"
 		},
 		"containerUri": {
 			"type": "string",
@@ -61,6 +69,9 @@
 					"AzureBlobStorageLS_connectionString": {
 						"value": "[parameters('AzureBlobStorageLS_connectionString')]"
 					},
+					"AzureBlobStorageSales_connectionString": {
+						"value": "[parameters('AzureBlobStorageSales_connectionString')]"
+					},
 					"LS_Snowflake_password": {
 						"value": "[parameters('LS_Snowflake_password')]"
 					},
@@ -75,6 +86,9 @@
 					},
 					"LS_Snowflake_properties_typeProperties_database": {
 						"value": "[parameters('LS_Snowflake_properties_typeProperties_database')]"
+					},
+					"linkedServiceSales_sasUri": {
+						"value": "[parameters('linkedServiceSales_sasUri')]"
 					}
 				}
 			},
