@@ -5,9 +5,20 @@
 			{
 				"name": "ForEach1",
 				"type": "ForEach",
-				"dependsOn": [],
+				"dependsOn": [
+					{
+						"activity": "ScriptToTruncate",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
 				"userProperties": [],
 				"typeProperties": {
+					"items": {
+						"value": "@variables('csv_files')",
+						"type": "Expression"
+					},
 					"activities": [
 						{
 							"name": "Copy data1",
@@ -42,9 +53,10 @@
 								"enableStaging": true,
 								"stagingSettings": {
 									"linkedServiceName": {
-										"referenceName": "linkedServiceSales",
+										"referenceName": "LSAzureBlobStorageInvoice",
 										"type": "LinkedServiceReference"
-									}
+									},
+									"path": ""
 								}
 							},
 							"inputs": [
@@ -70,6 +82,32 @@
 							]
 						}
 					]
+				}
+			},
+			{
+				"name": "ScriptToTruncate",
+				"type": "Script",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"linkedServiceName": {
+					"referenceName": "LS_Snowflake",
+					"type": "LinkedServiceReference"
+				},
+				"typeProperties": {
+					"scripts": [
+						{
+							"type": "Query",
+							"text": "-- You can save this as a procedure, or as a multi-statement script\nTRUNCATE TABLE INVOICE.STAGING.PRODUCTS;\nTRUNCATE TABLE INVOICE.STAGING.CUSTOMERS;\nTRUNCATE TABLE INVOICE.STAGING.STORES;\nTRUNCATE TABLE INVOICE.STAGING.SALES;"
+						}
+					],
+					"scriptBlockExecutionTimeout": "02:00:00"
 				}
 			}
 		],
