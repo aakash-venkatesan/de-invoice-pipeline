@@ -1,0 +1,337 @@
+{
+	"name": "DsSnowflakeTableInvoice",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "LS_SnowflakeInvoiceSales",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "SnowflakeV2Table",
+		"schema": [
+			{
+				"name": "SUBSIDIARY",
+				"type": "VARCHAR"
+			},
+			{
+				"name": "ENTITY",
+				"type": "VARCHAR"
+			},
+			{
+				"name": "SOURCE_SYSTEM",
+				"type": "VARCHAR"
+			},
+			{
+				"name": "INVOICE_COUNTRY",
+				"type": "VARCHAR"
+			},
+			{
+				"name": "MDM_BILL_PAYER_COUNTRY",
+				"type": "VARCHAR"
+			},
+			{
+				"name": "INVOICE_ID",
+				"type": "VARCHAR"
+			},
+			{
+				"name": "INVOICE_NUMBER",
+				"type": "VARCHAR"
+			},
+			{
+				"name": "INVOICE_TYPE",
+				"type": "VARCHAR"
+			},
+			{
+				"name": "INVOICE_DOCUMENT_TYPE",
+				"type": "VARCHAR"
+			},
+			{
+				"name": "INVOICE_STATUS",
+				"type": "VARCHAR"
+			},
+			{
+				"name": "INVOICE_DATE",
+				"type": "VARCHAR"
+			},
+			{
+				"name": "INVOICE_MONTH",
+				"type": "VARCHAR"
+			},
+			{
+				"name": "LINE_ITEM_ID",
+				"type": "VARCHAR"
+			},
+			{
+				"name": "DESCRIPTION",
+				"type": "VARCHAR"
+			},
+			{
+				"name": "EXTERNAL_REFERENCE",
+				"type": "VARCHAR"
+			},
+			{
+				"name": "INVOICE_TRN_ID",
+				"type": "VARCHAR"
+			},
+			{
+				"name": "RAW_GL_ACCOUNT_CODE",
+				"type": "VARCHAR"
+			},
+			{
+				"name": "TRN",
+				"type": "VARCHAR"
+			},
+			{
+				"name": "TRN_RAW",
+				"type": "VARCHAR"
+			},
+			{
+				"name": "TRN_1",
+				"type": "VARCHAR"
+			},
+			{
+				"name": "TRN_2",
+				"type": "VARCHAR"
+			},
+			{
+				"name": "TRN_3",
+				"type": "VARCHAR"
+			},
+			{
+				"name": "TRN_4",
+				"type": "VARCHAR"
+			},
+			{
+				"name": "TRN_5",
+				"type": "VARCHAR"
+			},
+			{
+				"name": "TRN_6",
+				"type": "VARCHAR"
+			},
+			{
+				"name": "RAW_REFERRER_ID",
+				"type": "VARCHAR"
+			},
+			{
+				"name": "RAW_REFERRER_NAME",
+				"type": "VARCHAR"
+			},
+			{
+				"name": "RAW_REFERRER_TYPE",
+				"type": "VARCHAR"
+			},
+			{
+				"name": "MDM_REFERRER_ID",
+				"type": "VARCHAR"
+			},
+			{
+				"name": "MDM_REFERRER_NAME",
+				"type": "VARCHAR"
+			},
+			{
+				"name": "GLOBAL_REFERRER_ID",
+				"type": "VARCHAR"
+			},
+			{
+				"name": "GLOBAL_REFERRER_NAME",
+				"type": "VARCHAR"
+			},
+			{
+				"name": "RAW_BILL_PAYER_ID",
+				"type": "VARCHAR"
+			},
+			{
+				"name": "RAW_BILL_PAYER_NAME",
+				"type": "VARCHAR"
+			},
+			{
+				"name": "RAW_BILL_PAYER_TYPE",
+				"type": "VARCHAR"
+			},
+			{
+				"name": "MDM_BILL_PAYER_ID",
+				"type": "VARCHAR"
+			},
+			{
+				"name": "MDM_BILL_PAYER_NAME",
+				"type": "VARCHAR"
+			},
+			{
+				"name": "GLOBAL_BILL_PAYER_ID",
+				"type": "VARCHAR"
+			},
+			{
+				"name": "GLOBAL_BILL_PAYER_NAME",
+				"type": "VARCHAR"
+			},
+			{
+				"name": "RAW_ROLE_ID",
+				"type": "VARCHAR"
+			},
+			{
+				"name": "RAW_ROLE",
+				"type": "VARCHAR"
+			},
+			{
+				"name": "MDM_ROLE_ID",
+				"type": "VARCHAR"
+			},
+			{
+				"name": "MDM_ROLE",
+				"type": "VARCHAR"
+			},
+			{
+				"name": "GLOBAL_ROLE_ID",
+				"type": "VARCHAR"
+			},
+			{
+				"name": "GLOBAL_ROLE",
+				"type": "VARCHAR"
+			},
+			{
+				"name": "RAW_BILLING_TYPE_ID",
+				"type": "VARCHAR"
+			},
+			{
+				"name": "RAW_BILLING_TYPE",
+				"type": "VARCHAR"
+			},
+			{
+				"name": "MDM_BILLING_TYPE_ID",
+				"type": "VARCHAR"
+			},
+			{
+				"name": "MDM_BILLING_TYPE",
+				"type": "VARCHAR"
+			},
+			{
+				"name": "GLOBAL_BILLING_TYPE_ID",
+				"type": "VARCHAR"
+			},
+			{
+				"name": "GLOBAL_BILLING_TYPE",
+				"type": "VARCHAR"
+			},
+			{
+				"name": "RAW_CHANNEL_ID",
+				"type": "VARCHAR"
+			},
+			{
+				"name": "RAW_CHANNEL",
+				"type": "VARCHAR"
+			},
+			{
+				"name": "MDM_CHANNEL_ID",
+				"type": "VARCHAR"
+			},
+			{
+				"name": "MDM_CHANNEL",
+				"type": "VARCHAR"
+			},
+			{
+				"name": "MDM_GL_ACCOUNT_CODE",
+				"type": "VARCHAR"
+			},
+			{
+				"name": "GLOBAL_CHANNEL_ID",
+				"type": "VARCHAR"
+			},
+			{
+				"name": "GLOBAL_CHANNEL",
+				"type": "VARCHAR"
+			},
+			{
+				"name": "NET",
+				"type": "VARCHAR"
+			},
+			{
+				"name": "INVOICE_CURRENCY",
+				"type": "VARCHAR"
+			},
+			{
+				"name": "NET_LOCAL_CURRENCY",
+				"type": "VARCHAR"
+			},
+			{
+				"name": "LOCAL_CURRENCY",
+				"type": "VARCHAR"
+			},
+			{
+				"name": "NET_GBP",
+				"type": "VARCHAR"
+			},
+			{
+				"name": "QUANTITY",
+				"type": "VARCHAR"
+			},
+			{
+				"name": "REFERENCE",
+				"type": "VARCHAR"
+			},
+			{
+				"name": "UNIT_PRICE",
+				"type": "VARCHAR"
+			},
+			{
+				"name": "VAT",
+				"type": "VARCHAR"
+			},
+			{
+				"name": "GROSS",
+				"type": "VARCHAR"
+			},
+			{
+				"name": "TOTAL_VAT",
+				"type": "VARCHAR"
+			},
+			{
+				"name": "INVOICE_TOTAL",
+				"type": "VARCHAR"
+			},
+			{
+				"name": "CREATED_DATE",
+				"type": "VARCHAR"
+			},
+			{
+				"name": "UPDATED_DATE",
+				"type": "VARCHAR"
+			},
+			{
+				"name": "DATE_UPLOADED",
+				"type": "VARCHAR"
+			},
+			{
+				"name": "DEPARTMENT",
+				"type": "VARCHAR"
+			},
+			{
+				"name": "MATURITY_DATE",
+				"type": "VARCHAR"
+			},
+			{
+				"name": "CLOSING_DATE",
+				"type": "VARCHAR"
+			},
+			{
+				"name": "INFLATION_FLAG",
+				"type": "VARCHAR"
+			},
+			{
+				"name": "IS_TAKEN_FOR_CUBE",
+				"type": "VARCHAR"
+			},
+			{
+				"name": "MATURITY_DATE_UPDATED",
+				"type": "VARCHAR"
+			},
+			{
+				"name": "MATURITY_DATE_MISSING_FLAG",
+				"type": "VARCHAR"
+			}
+		],
+		"typeProperties": {
+			"schema": "RAW",
+			"table": "RAW_INVOICE_DATA"
+		}
+	}
+}

@@ -36,20 +36,20 @@
 					"enableStaging": true,
 					"stagingSettings": {
 						"linkedServiceName": {
-							"referenceName": "LS_AzureBlobStorage",
+							"referenceName": "LSAzureBlobStorageInvoice",
 							"type": "LinkedServiceReference"
 						}
 					}
 				},
 				"inputs": [
 					{
-						"referenceName": "DS_BlobCSV",
+						"referenceName": "DS_INVOICE_CSV",
 						"type": "DatasetReference"
 					}
 				],
 				"outputs": [
 					{
-						"referenceName": "DS_Snowflake_Invoice",
+						"referenceName": "DsSnowflakeTableInvoice",
 						"type": "DatasetReference"
 					}
 				]
