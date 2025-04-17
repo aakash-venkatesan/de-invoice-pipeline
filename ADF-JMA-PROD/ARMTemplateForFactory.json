@@ -19,6 +19,10 @@
 			"type": "secureString",
 			"metadata": "Secure string for 'password' of 'LS_Snowflake'"
 		},
+		"LS_SnowflakeInvoiceSales_password": {
+			"type": "secureString",
+			"metadata": "Secure string for 'password' of 'LS_SnowflakeInvoiceSales'"
+		},
 		"SnowflakeV1_connectionString": {
 			"type": "secureString",
 			"metadata": "Secure string for 'connectionString' of 'SnowflakeV1'"
@@ -27,11 +31,19 @@
 			"type": "string",
 			"defaultValue": "https://AzureKeyVaultManager.vault.azure.net/"
 		},
+		"LSAzureBlobStorageInvoice_sasUri": {
+			"type": "secureString",
+			"metadata": "Secure string for 'sasUri' of 'LSAzureBlobStorageInvoice'"
+		},
 		"LS_AzureBlobStorage_sasUri": {
 			"type": "secureString",
 			"metadata": "Secure string for 'sasUri' of 'LS_AzureBlobStorage'"
 		},
 		"LS_Snowflake_properties_typeProperties_database": {
+			"type": "string",
+			"defaultValue": "INVOICE"
+		},
+		"LS_SnowflakeInvoiceSales_properties_typeProperties_database": {
 			"type": "string",
 			"defaultValue": "INVOICE"
 		},
@@ -84,21 +96,21 @@
 							"enableStaging": true,
 							"stagingSettings": {
 								"linkedServiceName": {
-									"referenceName": "LS_AzureBlobStorage",
+									"referenceName": "LSAzureBlobStorageInvoice",
 									"type": "LinkedServiceReference"
 								}
 							}
 						},
 						"inputs": [
 							{
-								"referenceName": "DS_BlobCSV",
+								"referenceName": "DS_INVOICE_CSV",
 								"type": "DatasetReference",
 								"parameters": {}
 							}
 						],
 						"outputs": [
 							{
-								"referenceName": "DS_Snowflake_Invoice",
+								"referenceName": "DsSnowflakeTableInvoice",
 								"type": "DatasetReference",
 								"parameters": {}
 							}
@@ -112,9 +124,9 @@
 				"lastPublishTime": "2025-04-15T19:22:33Z"
 			},
 			"dependsOn": [
-				"[concat(variables('factoryId'), '/datasets/DS_BlobCSV')]",
-				"[concat(variables('factoryId'), '/datasets/DS_Snowflake_Invoice')]",
-				"[concat(variables('factoryId'), '/linkedServices/LS_AzureBlobStorage')]"
+				"[concat(variables('factoryId'), '/datasets/DS_INVOICE_CSV')]",
+				"[concat(variables('factoryId'), '/datasets/DsSnowflakeTableInvoice')]",
+				"[concat(variables('factoryId'), '/linkedServices/LSAzureBlobStorageInvoice')]"
 			]
 		},
 		{
@@ -387,11 +399,18 @@
 					{
 						"name": "ForEach1",
 						"type": "ForEach",
-						"dependsOn": [],
+						"dependsOn": [
+							{
+								"activity": "ScriptToTruncate",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
 						"userProperties": [],
 						"typeProperties": {
 							"items": {
-								"value": "@activity('Copy data1').output",
+								"value": "@variables('csv_files')",
 								"type": "Expression"
 							},
 							"activities": [
@@ -428,9 +447,10 @@
 										"enableStaging": true,
 										"stagingSettings": {
 											"linkedServiceName": {
-												"referenceName": "linkedServiceSales",
+												"referenceName": "LSAzureBlobStorageInvoice",
 												"type": "LinkedServiceReference"
-											}
+											},
+											"path": ""
 										}
 									},
 									"inputs": [
@@ -457,6 +477,32 @@
 								}
 							]
 						}
+					},
+					{
+						"name": "ScriptToTruncate",
+						"type": "Script",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"linkedServiceName": {
+							"referenceName": "LS_Snowflake",
+							"type": "LinkedServiceReference"
+						},
+						"typeProperties": {
+							"scripts": [
+								{
+									"type": "Query",
+									"text": "-- You can save this as a procedure, or as a multi-statement script\nTRUNCATE TABLE INVOICE.STAGING.PRODUCTS;\nTRUNCATE TABLE INVOICE.STAGING.CUSTOMERS;\nTRUNCATE TABLE INVOICE.STAGING.STORES;\nTRUNCATE TABLE INVOICE.STAGING.SALES;"
+								}
+							],
+							"scriptBlockExecutionTimeout": "02:00:00"
+						}
 					}
 				],
 				"policy": {
@@ -476,9 +522,10 @@
 				"annotations": []
 			},
 			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/LS_Snowflake')]",
 				"[concat(variables('factoryId'), '/datasets/DelimitedText1')]",
 				"[concat(variables('factoryId'), '/datasets/SnowflakeTableSales')]",
-				"[concat(variables('factoryId'), '/linkedServices/linkedServiceSales')]"
+				"[concat(variables('factoryId'), '/linkedServices/LSAzureBlobStorageInvoice')]"
 			]
 		},
 		{
@@ -1180,6 +1227,355 @@
 			]
 		},
 		{
+			"name": "[concat(parameters('factoryName'), '/DS_INVOICE_CSV')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "LSAzureBlobStorageInvoice",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "DelimitedText",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobStorageLocation",
+						"fileName": "RAW_INVOICE_DATA.csv",
+						"container": "invoicecontainer"
+					},
+					"columnDelimiter": ",",
+					"escapeChar": "\\",
+					"firstRowAsHeader": true,
+					"quoteChar": "\""
+				},
+				"schema": [
+					{
+						"name": "subsidiary",
+						"type": "String"
+					},
+					{
+						"name": "entity",
+						"type": "String"
+					},
+					{
+						"name": "source_system",
+						"type": "String"
+					},
+					{
+						"name": "invoice_country",
+						"type": "String"
+					},
+					{
+						"name": "mdm_bill_payer_country",
+						"type": "String"
+					},
+					{
+						"name": "invoice_id",
+						"type": "String"
+					},
+					{
+						"name": "invoice_number",
+						"type": "String"
+					},
+					{
+						"name": "invoice_type",
+						"type": "String"
+					},
+					{
+						"name": "invoice_document_type",
+						"type": "String"
+					},
+					{
+						"name": "invoice_status",
+						"type": "String"
+					},
+					{
+						"name": "invoice_date",
+						"type": "String"
+					},
+					{
+						"name": "invoice_month",
+						"type": "String"
+					},
+					{
+						"name": "line_item_id",
+						"type": "String"
+					},
+					{
+						"name": "description",
+						"type": "String"
+					},
+					{
+						"name": "external_reference",
+						"type": "String"
+					},
+					{
+						"name": "invoice_trn_id",
+						"type": "String"
+					},
+					{
+						"name": "raw_gl_account_code",
+						"type": "String"
+					},
+					{
+						"name": "trn",
+						"type": "String"
+					},
+					{
+						"name": "trn_raw",
+						"type": "String"
+					},
+					{
+						"name": "trn_1",
+						"type": "String"
+					},
+					{
+						"name": "trn_2",
+						"type": "String"
+					},
+					{
+						"name": "trn_3",
+						"type": "String"
+					},
+					{
+						"name": "trn_4",
+						"type": "String"
+					},
+					{
+						"name": "trn_5",
+						"type": "String"
+					},
+					{
+						"name": "trn_6",
+						"type": "String"
+					},
+					{
+						"name": "raw_referrer_id",
+						"type": "String"
+					},
+					{
+						"name": "raw_referrer_name",
+						"type": "String"
+					},
+					{
+						"name": "raw_referrer_type",
+						"type": "String"
+					},
+					{
+						"name": "mdm_referrer_id",
+						"type": "String"
+					},
+					{
+						"name": "mdm_referrer_name",
+						"type": "String"
+					},
+					{
+						"name": "global_referrer_id",
+						"type": "String"
+					},
+					{
+						"name": "global_referrer_name",
+						"type": "String"
+					},
+					{
+						"name": "raw_bill_payer_id",
+						"type": "String"
+					},
+					{
+						"name": "raw_bill_payer_name",
+						"type": "String"
+					},
+					{
+						"name": "raw_bill_payer_type",
+						"type": "String"
+					},
+					{
+						"name": "mdm_bill_payer_id",
+						"type": "String"
+					},
+					{
+						"name": "mdm_bill_payer_name",
+						"type": "String"
+					},
+					{
+						"name": "global_bill_payer_id",
+						"type": "String"
+					},
+					{
+						"name": "global_bill_payer_name",
+						"type": "String"
+					},
+					{
+						"name": "raw_role_id",
+						"type": "String"
+					},
+					{
+						"name": "raw_role",
+						"type": "String"
+					},
+					{
+						"name": "mdm_role_id",
+						"type": "String"
+					},
+					{
+						"name": "mdm_role",
+						"type": "String"
+					},
+					{
+						"name": "global_role_id",
+						"type": "String"
+					},
+					{
+						"name": "global_role",
+						"type": "String"
+					},
+					{
+						"name": "raw_billing_type_id",
+						"type": "String"
+					},
+					{
+						"name": "raw_billing_type",
+						"type": "String"
+					},
+					{
+						"name": "mdm_billing_type_id",
+						"type": "String"
+					},
+					{
+						"name": "mdm_billing_type",
+						"type": "String"
+					},
+					{
+						"name": "global_billing_type_id",
+						"type": "String"
+					},
+					{
+						"name": "global_billing_type",
+						"type": "String"
+					},
+					{
+						"name": "raw_channel_id",
+						"type": "String"
+					},
+					{
+						"name": "raw_channel",
+						"type": "String"
+					},
+					{
+						"name": "mdm_channel_id",
+						"type": "String"
+					},
+					{
+						"name": "mdm_channel",
+						"type": "String"
+					},
+					{
+						"name": "mdm_gl_account_code",
+						"type": "String"
+					},
+					{
+						"name": "global_channel_id",
+						"type": "String"
+					},
+					{
+						"name": "global_channel",
+						"type": "String"
+					},
+					{
+						"name": "net",
+						"type": "String"
+					},
+					{
+						"name": "invoice_currency",
+						"type": "String"
+					},
+					{
+						"name": "net_local_currency",
+						"type": "String"
+					},
+					{
+						"name": "local_currency",
+						"type": "String"
+					},
+					{
+						"name": "net_gbp",
+						"type": "String"
+					},
+					{
+						"name": "quantity",
+						"type": "String"
+					},
+					{
+						"name": "reference",
+						"type": "String"
+					},
+					{
+						"name": "unit_price",
+						"type": "String"
+					},
+					{
+						"name": "vat",
+						"type": "String"
+					},
+					{
+						"name": "gross",
+						"type": "String"
+					},
+					{
+						"name": "total_vat",
+						"type": "String"
+					},
+					{
+						"name": "invoice_total",
+						"type": "String"
+					},
+					{
+						"name": "created_date",
+						"type": "String"
+					},
+					{
+						"name": "updated_date",
+						"type": "String"
+					},
+					{
+						"name": "date_uploaded",
+						"type": "String"
+					},
+					{
+						"name": "department",
+						"type": "String"
+					},
+					{
+						"name": "maturity_date",
+						"type": "String"
+					},
+					{
+						"name": "closing_date",
+						"type": "String"
+					},
+					{
+						"name": "inflation_flag",
+						"type": "String"
+					},
+					{
+						"name": "is_taken_for_cube",
+						"type": "String"
+					},
+					{
+						"name": "maturity_date_updated",
+						"type": "String"
+					},
+					{
+						"name": "maturity_date_missing_flag",
+						"type": "String"
+					}
+				]
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/LSAzureBlobStorageInvoice')]"
+			]
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/DS_Snowflake_Invoice')]",
 			"type": "Microsoft.DataFactory/factories/datasets",
 			"apiVersion": "2018-06-01",
@@ -1267,6 +1663,348 @@
 			},
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/linkedServices/AzureBlobStorageSales')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/DsSnowflakeTableInvoice')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "LS_SnowflakeInvoiceSales",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "SnowflakeV2Table",
+				"schema": [
+					{
+						"name": "SUBSIDIARY",
+						"type": "VARCHAR"
+					},
+					{
+						"name": "ENTITY",
+						"type": "VARCHAR"
+					},
+					{
+						"name": "SOURCE_SYSTEM",
+						"type": "VARCHAR"
+					},
+					{
+						"name": "INVOICE_COUNTRY",
+						"type": "VARCHAR"
+					},
+					{
+						"name": "MDM_BILL_PAYER_COUNTRY",
+						"type": "VARCHAR"
+					},
+					{
+						"name": "INVOICE_ID",
+						"type": "VARCHAR"
+					},
+					{
+						"name": "INVOICE_NUMBER",
+						"type": "VARCHAR"
+					},
+					{
+						"name": "INVOICE_TYPE",
+						"type": "VARCHAR"
+					},
+					{
+						"name": "INVOICE_DOCUMENT_TYPE",
+						"type": "VARCHAR"
+					},
+					{
+						"name": "INVOICE_STATUS",
+						"type": "VARCHAR"
+					},
+					{
+						"name": "INVOICE_DATE",
+						"type": "VARCHAR"
+					},
+					{
+						"name": "INVOICE_MONTH",
+						"type": "VARCHAR"
+					},
+					{
+						"name": "LINE_ITEM_ID",
+						"type": "VARCHAR"
+					},
+					{
+						"name": "DESCRIPTION",
+						"type": "VARCHAR"
+					},
+					{
+						"name": "EXTERNAL_REFERENCE",
+						"type": "VARCHAR"
+					},
+					{
+						"name": "INVOICE_TRN_ID",
+						"type": "VARCHAR"
+					},
+					{
+						"name": "RAW_GL_ACCOUNT_CODE",
+						"type": "VARCHAR"
+					},
+					{
+						"name": "TRN",
+						"type": "VARCHAR"
+					},
+					{
+						"name": "TRN_RAW",
+						"type": "VARCHAR"
+					},
+					{
+						"name": "TRN_1",
+						"type": "VARCHAR"
+					},
+					{
+						"name": "TRN_2",
+						"type": "VARCHAR"
+					},
+					{
+						"name": "TRN_3",
+						"type": "VARCHAR"
+					},
+					{
+						"name": "TRN_4",
+						"type": "VARCHAR"
+					},
+					{
+						"name": "TRN_5",
+						"type": "VARCHAR"
+					},
+					{
+						"name": "TRN_6",
+						"type": "VARCHAR"
+					},
+					{
+						"name": "RAW_REFERRER_ID",
+						"type": "VARCHAR"
+					},
+					{
+						"name": "RAW_REFERRER_NAME",
+						"type": "VARCHAR"
+					},
+					{
+						"name": "RAW_REFERRER_TYPE",
+						"type": "VARCHAR"
+					},
+					{
+						"name": "MDM_REFERRER_ID",
+						"type": "VARCHAR"
+					},
+					{
+						"name": "MDM_REFERRER_NAME",
+						"type": "VARCHAR"
+					},
+					{
+						"name": "GLOBAL_REFERRER_ID",
+						"type": "VARCHAR"
+					},
+					{
+						"name": "GLOBAL_REFERRER_NAME",
+						"type": "VARCHAR"
+					},
+					{
+						"name": "RAW_BILL_PAYER_ID",
+						"type": "VARCHAR"
+					},
+					{
+						"name": "RAW_BILL_PAYER_NAME",
+						"type": "VARCHAR"
+					},
+					{
+						"name": "RAW_BILL_PAYER_TYPE",
+						"type": "VARCHAR"
+					},
+					{
+						"name": "MDM_BILL_PAYER_ID",
+						"type": "VARCHAR"
+					},
+					{
+						"name": "MDM_BILL_PAYER_NAME",
+						"type": "VARCHAR"
+					},
+					{
+						"name": "GLOBAL_BILL_PAYER_ID",
+						"type": "VARCHAR"
+					},
+					{
+						"name": "GLOBAL_BILL_PAYER_NAME",
+						"type": "VARCHAR"
+					},
+					{
+						"name": "RAW_ROLE_ID",
+						"type": "VARCHAR"
+					},
+					{
+						"name": "RAW_ROLE",
+						"type": "VARCHAR"
+					},
+					{
+						"name": "MDM_ROLE_ID",
+						"type": "VARCHAR"
+					},
+					{
+						"name": "MDM_ROLE",
+						"type": "VARCHAR"
+					},
+					{
+						"name": "GLOBAL_ROLE_ID",
+						"type": "VARCHAR"
+					},
+					{
+						"name": "GLOBAL_ROLE",
+						"type": "VARCHAR"
+					},
+					{
+						"name": "RAW_BILLING_TYPE_ID",
+						"type": "VARCHAR"
+					},
+					{
+						"name": "RAW_BILLING_TYPE",
+						"type": "VARCHAR"
+					},
+					{
+						"name": "MDM_BILLING_TYPE_ID",
+						"type": "VARCHAR"
+					},
+					{
+						"name": "MDM_BILLING_TYPE",
+						"type": "VARCHAR"
+					},
+					{
+						"name": "GLOBAL_BILLING_TYPE_ID",
+						"type": "VARCHAR"
+					},
+					{
+						"name": "GLOBAL_BILLING_TYPE",
+						"type": "VARCHAR"
+					},
+					{
+						"name": "RAW_CHANNEL_ID",
+						"type": "VARCHAR"
+					},
+					{
+						"name": "RAW_CHANNEL",
+						"type": "VARCHAR"
+					},
+					{
+						"name": "MDM_CHANNEL_ID",
+						"type": "VARCHAR"
+					},
+					{
+						"name": "MDM_CHANNEL",
+						"type": "VARCHAR"
+					},
+					{
+						"name": "MDM_GL_ACCOUNT_CODE",
+						"type": "VARCHAR"
+					},
+					{
+						"name": "GLOBAL_CHANNEL_ID",
+						"type": "VARCHAR"
+					},
+					{
+						"name": "GLOBAL_CHANNEL",
+						"type": "VARCHAR"
+					},
+					{
+						"name": "NET",
+						"type": "VARCHAR"
+					},
+					{
+						"name": "INVOICE_CURRENCY",
+						"type": "VARCHAR"
+					},
+					{
+						"name": "NET_LOCAL_CURRENCY",
+						"type": "VARCHAR"
+					},
+					{
+						"name": "LOCAL_CURRENCY",
+						"type": "VARCHAR"
+					},
+					{
+						"name": "NET_GBP",
+						"type": "VARCHAR"
+					},
+					{
+						"name": "QUANTITY",
+						"type": "VARCHAR"
+					},
+					{
+						"name": "REFERENCE",
+						"type": "VARCHAR"
+					},
+					{
+						"name": "UNIT_PRICE",
+						"type": "VARCHAR"
+					},
+					{
+						"name": "VAT",
+						"type": "VARCHAR"
+					},
+					{
+						"name": "GROSS",
+						"type": "VARCHAR"
+					},
+					{
+						"name": "TOTAL_VAT",
+						"type": "VARCHAR"
+					},
+					{
+						"name": "INVOICE_TOTAL",
+						"type": "VARCHAR"
+					},
+					{
+						"name": "CREATED_DATE",
+						"type": "VARCHAR"
+					},
+					{
+						"name": "UPDATED_DATE",
+						"type": "VARCHAR"
+					},
+					{
+						"name": "DATE_UPLOADED",
+						"type": "VARCHAR"
+					},
+					{
+						"name": "DEPARTMENT",
+						"type": "VARCHAR"
+					},
+					{
+						"name": "MATURITY_DATE",
+						"type": "VARCHAR"
+					},
+					{
+						"name": "CLOSING_DATE",
+						"type": "VARCHAR"
+					},
+					{
+						"name": "INFLATION_FLAG",
+						"type": "VARCHAR"
+					},
+					{
+						"name": "IS_TAKEN_FOR_CUBE",
+						"type": "VARCHAR"
+					},
+					{
+						"name": "MATURITY_DATE_UPDATED",
+						"type": "VARCHAR"
+					},
+					{
+						"name": "MATURITY_DATE_MISSING_FLAG",
+						"type": "VARCHAR"
+					}
+				],
+				"typeProperties": {
+					"schema": "RAW",
+					"table": "RAW_INVOICE_DATA"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/LS_SnowflakeInvoiceSales')]"
 			]
 		},
 		{
@@ -1363,6 +2101,19 @@
 			"dependsOn": []
 		},
 		{
+			"name": "[concat(parameters('factoryName'), '/LSAzureBlobStorageInvoice')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "AzureBlobStorage",
+				"typeProperties": {
+					"sasUri": "[parameters('LSAzureBlobStorageInvoice_sasUri')]"
+				}
+			},
+			"dependsOn": []
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/LS_AzureBlobStorage')]",
 			"type": "Microsoft.DataFactory/factories/linkedServices",
 			"apiVersion": "2018-06-01",
@@ -1391,6 +2142,27 @@
 					"password": {
 						"type": "SecureString",
 						"value": "[parameters('LS_Snowflake_password')]"
+					}
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/LS_SnowflakeInvoiceSales')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "SnowflakeV2",
+				"typeProperties": {
+					"authenticationType": "Basic",
+					"accountIdentifier": "RCEVYXE-QW48432",
+					"user": "aakash",
+					"database": "[parameters('LS_SnowflakeInvoiceSales_properties_typeProperties_database')]",
+					"warehouse": "COMPUTE_WH",
+					"password": {
+						"type": "SecureString",
+						"value": "[parameters('LS_SnowflakeInvoiceSales_password')]"
 					}
 				}
 			},

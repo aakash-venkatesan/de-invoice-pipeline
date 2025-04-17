@@ -19,6 +19,10 @@
 			"type": "secureString",
 			"metadata": "Secure string for 'password' of 'LS_Snowflake'"
 		},
+		"LS_SnowflakeInvoiceSales_password": {
+			"type": "secureString",
+			"metadata": "Secure string for 'password' of 'LS_SnowflakeInvoiceSales'"
+		},
 		"SnowflakeV1_connectionString": {
 			"type": "secureString",
 			"metadata": "Secure string for 'connectionString' of 'SnowflakeV1'"
@@ -27,11 +31,19 @@
 			"type": "string",
 			"defaultValue": "https://AzureKeyVaultManager.vault.azure.net/"
 		},
+		"LSAzureBlobStorageInvoice_sasUri": {
+			"type": "secureString",
+			"metadata": "Secure string for 'sasUri' of 'LSAzureBlobStorageInvoice'"
+		},
 		"LS_AzureBlobStorage_sasUri": {
 			"type": "secureString",
 			"metadata": "Secure string for 'sasUri' of 'LS_AzureBlobStorage'"
 		},
 		"LS_Snowflake_properties_typeProperties_database": {
+			"type": "string",
+			"defaultValue": "INVOICE"
+		},
+		"LS_SnowflakeInvoiceSales_properties_typeProperties_database": {
 			"type": "string",
 			"defaultValue": "INVOICE"
 		},
@@ -75,11 +87,17 @@
 					"LS_Snowflake_password": {
 						"value": "[parameters('LS_Snowflake_password')]"
 					},
+					"LS_SnowflakeInvoiceSales_password": {
+						"value": "[parameters('LS_SnowflakeInvoiceSales_password')]"
+					},
 					"SnowflakeV1_connectionString": {
 						"value": "[parameters('SnowflakeV1_connectionString')]"
 					},
 					"AzureKeyVaultForSnowflake_properties_typeProperties_baseUrl": {
 						"value": "[parameters('AzureKeyVaultForSnowflake_properties_typeProperties_baseUrl')]"
+					},
+					"LSAzureBlobStorageInvoice_sasUri": {
+						"value": "[parameters('LSAzureBlobStorageInvoice_sasUri')]"
 					},
 					"LS_AzureBlobStorage_sasUri": {
 						"value": "[parameters('LS_AzureBlobStorage_sasUri')]"
@@ -87,12 +105,35 @@
 					"LS_Snowflake_properties_typeProperties_database": {
 						"value": "[parameters('LS_Snowflake_properties_typeProperties_database')]"
 					},
+					"LS_SnowflakeInvoiceSales_properties_typeProperties_database": {
+						"value": "[parameters('LS_SnowflakeInvoiceSales_properties_typeProperties_database')]"
+					},
 					"linkedServiceSales_sasUri": {
 						"value": "[parameters('linkedServiceSales_sasUri')]"
 					}
 				}
 			},
 			"dependsOn": []
+		},
+		{
+			"name": "ADF-JMA-PROD_ArmTemplate_1",
+			"type": "Microsoft.Resources/deployments",
+			"apiVersion": "2024-03-01",
+			"properties": {
+				"mode": "incremental",
+				"templateLink": {
+					"uri": "[concat(parameters('containerUri'), '/ArmTemplate_1.json', parameters('containerSasToken'))]",
+					"contentVersion": "1.0.0.0"
+				},
+				"parameters": {
+					"factoryName": {
+						"value": "[parameters('factoryName')]"
+					}
+				}
+			},
+			"dependsOn": [
+				"[resourceId('Microsoft.Resources/deployments', 'ADF-JMA-PROD_ArmTemplate_0')]"
+			]
 		}
 	]
 }
